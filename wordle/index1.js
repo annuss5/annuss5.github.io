@@ -1,12 +1,15 @@
-const dictionary=['earth', 'plane', 'enemy','audio','house']; 
-const state = {
-    secret: dictionary[Math.floor(Math.random() * dictionary.length)],
-    grid: Array(6)
-      .fill()
-      .map(() => Array(5).fill('')),
-    currentRow: 0,
-    currentCol: 0,
-  };
+fetch('dictionary.txt')
+  .then(response => response.text())
+  .then(text => {
+    const dictionary = text.split('\n').filter(word => word.trim() !== '');
+    const state = {
+      secret: dictionary[Math.floor(Math.random() * dictionary.length)],
+      grid: Array(6).fill().map(() => Array(5).fill('')),
+      currentRow: 0,
+      currentCol: 0,
+    };
+    
+    
 function updateGrid() {
     for (let i = 0; i < state.grid.length; i++) {
       for (let j = 0; j < state.grid[i].length; j++) {
@@ -46,7 +49,8 @@ function registerKeyboardEvents() {
             revealWord(word);
             state.currentRow++;
             state.currentCol = 0;
-          } else {
+          }
+          if (!isWordValid(word)) {
             alert('Not a valid word.');
           }
         }
@@ -61,6 +65,7 @@ function registerKeyboardEvents() {
       updateGrid();
     };
   }
+  
 
   function getCurrentWord() {
     return state.grid[state.currentRow].reduce((prev, curr) => prev + curr);
@@ -133,10 +138,17 @@ function removeLetter() {
     function startup() {
     const game = document.getElementById('game');
     drawGrid(game);
- 
+    
+    
+
+
+
     registerKeyboardEvents();
           
     }
           
     startup();
       
+  })
+  .catch(error => console.error(error));
+
